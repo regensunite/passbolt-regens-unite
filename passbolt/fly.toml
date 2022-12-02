@@ -22,6 +22,15 @@ processes = []
   DATASOURCES_DEFAULT_DATABASE = "passbolt_1"
   DATASOURCES_DEFAULT_USERNAME = "bb6d5879"
   # NOTE: DATASOURCES_DEFAULT_PASSWORD set with cli
+  # NOTE: allowing anyone to register should be fine, because admins get notified of new registrations
+  PASSBOLT_REGISTRATION_PUBLIC = "true"
+  EMAIL_DEFAULT_FROM_NAME = "Passbolt (Regens Unite)"
+  EMAIL_DEFAULT_FROM = "bruno.regens.unite@gmail.com"
+  EMAIL_TRANSPORT_DEFAULT_HOST = "smtp.gmail.com"
+  EMAIL_TRANSPORT_DEFAULT_PORT = "587"
+  EMAIL_TRANSPORT_DEFAULT_TLS = "true"
+  EMAIL_TRANSPORT_DEFAULT_USERNAME = "bruno.regens.unite@gmail.com"
+  # NOTE: EMAIL_TRANSPORT_DEFAULT_PASSWORD set with cli
 
 [experimental]
   allowed_public_ports = []
