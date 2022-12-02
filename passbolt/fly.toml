@@ -1,0 +1,63 @@
+# fly.toml file generated for passbolt-regens-unite on 2022-12-01T17:33:16+01:00
+
+app = "passbolt-regens-unite"
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[build]
+  dockerfile = "Dockerfile"
+
+[mounts]
+  # NOTE: this volume was previously created with `fly volumes create passbolt_regens_unite --size 1`
+  # NOTE: 1GB of storage provided, to stay within free tier
+  source="passbolt_regens_unite"
+  # NOTE: volume should contain `/etc/passbolt/gpg` and `/etc/passbolt/jwt` (cf. docker compose)
+  #       this is accomplished by creating symlinks with script `docker-entrypoint-extended.sh`
+  destination="/data"
+
+[env]
+  APP_FULL_BASE_URL = "https://passbolt-regens-unite.fly.dev"
+  DATASOURCES_DEFAULT_HOST = "mysql-regens-unite.internal"
+  DATASOURCES_DEFAULT_DATABASE = "passbolt_1"
+  DATASOURCES_DEFAULT_USERNAME = "bb6d5879"
+  # NOTE: DATASOURCES_DEFAULT_PASSWORD set with cli
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true
+  # NOTE: cf. docker compose
+  cmd = [
+    "/usr/bin/wait-for.sh",
+    "-t", "0",
+    "mysql-regens-unite.internal:3306",
+    "--",
+    "/docker-entrypoint-extended.sh"
+  ]
+
+# HTTP PORT
+[[services]]
+  # NOTE: the fly.io proxy unwinds external https requests
+  #       and sends them to passbolt over http over a secure VPN tunnel
+  internal_port = 80
+  protocol = "tcp"
+
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+    force_https = true
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    grace_period = "1s"
+    interval = "15s"
+    restart_limit = 0
+    timeout = "2s"
