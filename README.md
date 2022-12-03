@@ -45,6 +45,14 @@ see: https://help.passbolt.com/hosting/backup/from-source.html
 Check out the backup script in this repo.
 
 
+#### Restore MySQL Database
+
+#TODO verify this works
+
+1. `fly proxy 3306 -a mysql-regens-unite`
+2. `mysql -u bb6d5879 -p -h 127.0.0.1 passbolt_1 < backup.sql`
+
+
 ### Required Secrets
 
 - `DATASOURCES_DEFAULT_PASSWORD`
@@ -79,8 +87,23 @@ see: https://help.passbolt.com/hosting/install/ce/docker.html
 - `fly volumes list`
 - `fly deploy`
 - `fly ssh console`
+- `fly doctor` to troubleshoot
+
+
+### Use `scp`
+
+see: https://fly.io/docs/reference/private-networking/#private-network-vpn
+
+1. Install the Wireguard client: https://www.wireguard.com/install/
+2. `fly wireguard create` to create a config file for Wireguard
+  - Save this file with `.conf` extension and keep it. Do not commit it to the git repo!
+3. Start the Wireguard tunnel
+4. `fly ssh issue --agent`
+5. `scp backup.sql root@mysql-regens-unite.internal:/tmp/backup.sql`
+  - if you get an error à la "exec: "scp": executable file not found in $PATH" you need to install scp on the server first
 
 
 ## TODO
 - figure out how to restore from backups
+  - use mysql 5 (less memory intensive)
 - document for community
