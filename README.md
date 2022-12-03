@@ -42,6 +42,8 @@ ports that passbolt uses: https://help.passbolt.com/faq/hosting/firewall-rules
 
 see: https://help.passbolt.com/hosting/backup/from-source.html
 
+Check out the backup script in this repo.
+
 
 ### Required Secrets
 
@@ -80,5 +82,5 @@ see: https://help.passbolt.com/hosting/install/ce/docker.html
 
 
 ## TODO
-- figure out how to do backups and restore from backups
+- figure out how to restore from backups
 - document for community
