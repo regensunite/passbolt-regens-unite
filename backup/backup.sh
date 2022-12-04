@@ -61,5 +61,6 @@ fly sftp get "$PASSBOLT_GPG_SERVER_KEY_PRIVATE" "$FOLDER/serverkey_private.asc" 
 # DOWNLOAD DATABASE DUMP #
 ##########################
 
+echo "creating a mysql dump requires password of user $MYSQL_USER@$APP_MYSQL.internal:"
 fly ssh console --app "$APP_MYSQL" --command "mysqldump -u $MYSQL_USER -p $MYSQL_DATABASE --result-file=/tmp/db-dump-$TIMESTAMP.sql"
 fly sftp get "/tmp/db-dump-$TIMESTAMP.sql" "$FOLDER/db-dump-$TIMESTAMP.sql" --app "$APP_MYSQL"
