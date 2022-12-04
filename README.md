@@ -38,21 +38,6 @@ config reference: https://fly.io/docs/reference/configuration
 ports that passbolt uses: https://help.passbolt.com/faq/hosting/firewall-rules
 
 
-### Backup Procedure
-
-see: https://help.passbolt.com/hosting/backup/from-source.html
-
-Check out the backup script in this repo.
-
-
-#### Restore MySQL Database
-
-#TODO verify this works
-
-1. `fly proxy 3306 -a mysql-regens-unite`
-2. `mysql -u bb6d5879 -p -h 127.0.0.1 passbolt_1 < backup.sql`
-
-
 ### Required Secrets
 
 - `DATASOURCES_DEFAULT_PASSWORD`
@@ -78,6 +63,32 @@ see: https://help.passbolt.com/hosting/install/ce/docker.html
 3. `./cake passbolt register_user -u <email address> -f <first name> -l <last name> -r admin`
 
 
+### Create Backup
+
+see: https://help.passbolt.com/hosting/backup/from-source.html
+
+Check out the backup script in this repo.
+
+
+### Restore Backup
+
+#### MySQL Database
+
+- (local) `scp backup.sql root@mysql-regens-unite.internal:/tmp/backup.sql`
+- (server) `mysql -u bb6d5879 -p passbolt_1 < backup.sql`
+- (server) testing...
+  - `mysql -u bb6d5879 -p passbolt_1`
+  - `show tables;`
+  - ...
+
+
+#### Passbolt Keys
+
+- (local) `scp backup/serverkey.asc root@passbolt-regens-unite.internal:/etc/passbolt/gpg/serverkey.asc`
+- (local) `scp backup/serverkey_private.asc root@passbolt-regens-unite.internal:/etc/passbolt/gpg/serverkey_private.asc`
+- (local) `fly apps restart passbolt-regens-unite`
+
+
 ## Fly.io CLI Cheat Sheet
 
 - `fly help`
@@ -88,6 +99,8 @@ see: https://help.passbolt.com/hosting/install/ce/docker.html
 - `fly deploy`
 - `fly ssh console`
 - `fly doctor` to troubleshoot
+- `flyctl wireguard reset`
+- `fly proxy 3306 -a mysql-regens-unite`
 
 
 ### Use `scp`
@@ -101,9 +114,3 @@ see: https://fly.io/docs/reference/private-networking/#private-network-vpn
 4. `fly ssh issue --agent`
 5. `scp backup.sql root@mysql-regens-unite.internal:/tmp/backup.sql`
   - if you get an error à la "exec: "scp": executable file not found in $PATH" you need to install scp on the server first
-
-
-## TODO
-- figure out how to restore from backups
-  - use mysql 5 (less memory intensive)
-- document for community

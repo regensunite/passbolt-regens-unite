@@ -17,7 +17,7 @@ processes = []
   MYSQL_USER = "bb6d5879"
 
 [build]
-  image = "mysql:8"
+  dockerfile = "Dockerfile"
 
 [experimental]
   allowed_public_ports = []
@@ -27,7 +27,8 @@ processes = []
     "mysql_native_password",
     "--datadir",
     "/data/mysql",
-    # NOTE: two lines below ensure MYSQL 8 can work with the RAM available in the free tier
-    "--performance-schema=OFF",
-    "--innodb-buffer-pool-size", "64M"
+    # NOTE: two lines below ensure MYSQL 8 can work with the RAM available in the free tier,
+    #       see: https://fly.io/docs/app-guides/mysql-on-fly/#scale-the-app
+    # "--performance-schema=OFF",
+    # "--innodb-buffer-pool-size", "64M"
   ]
