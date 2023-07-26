@@ -1,20 +1,24 @@
-# fly.toml file generated for passbolt-regens-unite on 2022-12-01T17:33:16+01:00
+# fly.toml app configuration file generated for passbolt-regens-unite on 2023-07-26T15:22:42+02:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
 app = "passbolt-regens-unite"
+primary_region = "ams2"
 kill_signal = "SIGINT"
-kill_timeout = 5
-processes = []
+kill_timeout = "5s"
 
 [build]
   dockerfile = "Dockerfile"
 
-[mounts]
+[[mounts]]
   # NOTE: this volume was previously created with `fly volumes create passbolt_regens_unite --size 1`
   # NOTE: 1GB of storage provided, to stay within free tier
   source="passbolt_regens_unite"
   # NOTE: volume should contain `/etc/passbolt/gpg` and `/etc/passbolt/jwt` (cf. docker compose)
   #       this is accomplished by creating symlinks with script `docker-entrypoint-extended.sh`
   destination="/data"
+  processes=["app"]
 
 [env]
   APP_FULL_BASE_URL = "https://passbolt-regens-unite.fly.dev"
@@ -31,11 +35,10 @@ processes = []
   EMAIL_TRANSPORT_DEFAULT_TLS = "true"
   EMAIL_TRANSPORT_DEFAULT_USERNAME = "bruno.regens.unite@gmail.com"
   # NOTE: EMAIL_TRANSPORT_DEFAULT_PASSWORD set with cli
-
+  
 [experimental]
-  allowed_public_ports = []
   auto_rollback = true
-  # NOTE: cf. docker compose
+  # NOTE: cf. docker compose  
   cmd = [
     "/usr/bin/wait-for.sh",
     "-t", "0",
@@ -43,14 +46,14 @@ processes = []
     "--",
     "/docker-entrypoint-extended.sh"
   ]
-
+  
 # HTTP PORT
 [[services]]
   # NOTE: the fly.io proxy unwinds external https requests
   #       and sends them to passbolt over http over a secure VPN tunnel
   internal_port = 80
   protocol = "tcp"
-
+  
   [services.concurrency]
     hard_limit = 25
     soft_limit = 20
@@ -67,6 +70,6 @@ processes = []
 
   [[services.tcp_checks]]
     grace_period = "1s"
-    interval = "15s"
+    interval = "15s"    
     restart_limit = 0
     timeout = "2s"
